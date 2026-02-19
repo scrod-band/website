@@ -7,859 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
-
-  <style>
-    /* ── TOKENS ─────────────────────────────────────────────── */
-    :root {
-      --ink:       #0e0a14;
-      --deep:      #1a1026;
-      --plum:      #2e1a47;
-      --purple:    #7b3fa0;
-      --violet:    #a855f7;
-      --tobacco:   #5c3d1e;
-      --brown:     #8b5e3c;
-      --sienna:    #c4814a;
-      --cream:     #f5ead8;
-      --gold:      #d4a843;
-      --teal:      #2dd4bf;
-      --text:      #e8dff0;
-      --muted:     #9980b0;
-      --radius:    12px;
-      --max:       1100px;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--ink);
-      color: var(--text);
-      font-family: 'Crimson Pro', serif;
-      font-size: 18px;
-      line-height: 1.7;
-      overflow-x: hidden;
-    }
-
-    /* ── NOISE OVERLAY ───────────────────────────────────────── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.6;
-    }
-
-    /* ── SCROLLBAR ───────────────────────────────────────────── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--ink); }
-    ::-webkit-scrollbar-thumb { background: var(--plum); border-radius: 3px; }
-
-    /* ── LAYOUT ──────────────────────────────────────────────── */
-    .container {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    section { padding: 90px 0; }
-
-    /* ── HEADER / HERO ───────────────────────────────────────── */
-    #hero {
-      min-height: 100svh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-      padding: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 20% 50%, rgba(123,63,160,0.35) 0%, transparent 70%),
-        radial-gradient(ellipse 60% 80% at 80% 30%, rgba(92,61,30,0.4) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 40% at 60% 80%, rgba(45,212,191,0.1) 0%, transparent 60%),
-        var(--ink);
-    }
-
-    .fish-bg {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .fish {
-      position: absolute;
-      opacity: 0.04;
-      fill: var(--violet);
-      animation: swim linear infinite;
-    }
-
-    @keyframes swim {
-      0%   { transform: translateX(-120px) translateY(0px) scaleX(1); }
-      49%  { transform: translateX(calc(100vw + 120px)) translateY(-40px) scaleX(1); }
-      50%  { transform: translateX(calc(100vw + 120px)) translateY(-40px) scaleX(-1); }
-      100% { transform: translateX(-120px) translateY(0px) scaleX(-1); }
-    }
-
-    .fish:nth-child(1) { top: 20%; width: 80px; animation-duration: 28s; animation-delay: 0s; }
-    .fish:nth-child(2) { top: 55%; width: 50px; animation-duration: 22s; animation-delay: -8s; opacity: 0.03; }
-    .fish:nth-child(3) { top: 75%; width: 110px; animation-duration: 35s; animation-delay: -15s; }
-    .fish:nth-child(4) { top: 38%; width: 40px; animation-duration: 18s; animation-delay: -5s; opacity: 0.025; }
-
-    .hero-inner {
-      position: relative;
-      z-index: 2;
-      padding: 100px 24px 60px;
-      max-width: var(--max);
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    .hero-eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--sienna);
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .hero-eyebrow::before {
-      content: '';
-      display: block;
-      width: 32px;
-      height: 1px;
-      background: var(--sienna);
-    }
-
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(72px, 14vw, 160px);
-      font-weight: 900;
-      line-height: 0.88;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, var(--cream) 0%, var(--violet) 45%, var(--gold) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 28px;
-      animation: fadeUp 1s ease both;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .hero-tagline {
-      font-family: 'Crimson Pro', serif;
-      font-style: italic;
-      font-size: clamp(18px, 2.5vw, 26px);
-      color: var(--muted);
-      margin-bottom: 48px;
-      animation: fadeUp 1s 0.2s ease both;
-    }
-
-    .hero-tagline em { color: var(--sienna); font-style: normal; }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      animation: fadeUp 1s 0.4s ease both;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 13px 28px;
-      border-radius: 6px;
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      text-decoration: none;
-      transition: all 0.25s ease;
-      cursor: pointer;
-      border: none;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--purple), var(--plum));
-      color: var(--cream);
-      box-shadow: 0 4px 24px rgba(168,85,247,0.3);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(168,85,247,0.45);
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--sienna);
-      border: 1px solid rgba(196,129,74,0.4);
-    }
-
-    .btn-outline:hover {
-      background: rgba(196,129,74,0.08);
-      border-color: var(--sienna);
-      transform: translateY(-2px);
-    }
-
-    /* ── NAV ─────────────────────────────────────────────────── */
-    nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 100;
-      padding: 18px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: background 0.3s ease, backdrop-filter 0.3s ease;
-    }
-
-    nav.scrolled {
-      background: rgba(14,10,20,0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(123,63,160,0.2);
-    }
-
-    .nav-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 22px;
-      font-weight: 900;
-      color: var(--cream);
-      text-decoration: none;
-      letter-spacing: -0.01em;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 28px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--violet); }
-
-    /* ── SECTION LABELS ───────────────────────────────────────── */
-    .section-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--sienna);
-      margin-bottom: 12px;
-    }
-
-    h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(38px, 6vw, 64px);
-      font-weight: 700;
-      line-height: 1.05;
-      color: var(--cream);
-      margin-bottom: 24px;
-    }
-
-    h2 em {
-      font-style: italic;
-      color: var(--violet);
-    }
-
-    /* ── BIO ─────────────────────────────────────────────────── */
-    #bio {
-      background:
-        radial-gradient(ellipse 70% 50% at 90% 50%, rgba(92,61,30,0.2) 0%, transparent 70%),
-        var(--deep);
-    }
-
-    .bio-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
-      align-items: center;
-    }
-
-    .bio-text p {
-      color: rgba(232,223,240,0.82);
-      margin-bottom: 18px;
-      font-size: 19px;
-    }
-
-    .bio-text p:last-child { margin-bottom: 0; }
-
-    .members-card {
-      background: rgba(46,26,71,0.4);
-      border: 1px solid rgba(123,63,160,0.25);
-      border-radius: var(--radius);
-      padding: 32px;
-      backdrop-filter: blur(8px);
-    }
-
-    .members-card h3 {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--sienna);
-      margin-bottom: 20px;
-    }
-
-    .member {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(123,63,160,0.15);
-    }
-
-    .member:last-child { border-bottom: none; }
-
-    .member-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--violet), var(--sienna));
-      flex-shrink: 0;
-    }
-
-    .member-name {
-      font-family: 'Crimson Pro', serif;
-      font-size: 16px;
-      color: var(--cream);
-    }
-
-    .member-role {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.15em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-left: auto;
-    }
-
-    /* ── SHOWS / GIGS ────────────────────────────────────────── */
-    #shows {
-      background: var(--ink);
-      position: relative;
-    }
-
-    #shows::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--plum), transparent);
-    }
-
-    .shows-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-bottom: 48px;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-
-    .shows-list { display: flex; flex-direction: column; gap: 2px; }
-
-    .show-item {
-      display: grid;
-      grid-template-columns: 100px 1fr auto;
-      align-items: center;
-      gap: 24px;
-      padding: 22px 28px;
-      border-radius: var(--radius);
-      border: 1px solid rgba(123,63,160,0.12);
-      background: rgba(26,16,38,0.5);
-      transition: all 0.25s ease;
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .show-item:hover {
-      background: rgba(46,26,71,0.5);
-      border-color: rgba(168,85,247,0.3);
-      transform: translateX(4px);
-    }
-
-    .show-date {
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      color: var(--sienna);
-      letter-spacing: 0.1em;
-    }
-
-    .show-info .show-venue {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      color: var(--cream);
-    }
-
-    .show-info .show-location {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-    }
-
-    .show-ticket {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--violet);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      opacity: 0.7;
-    }
-
-    .shows-empty {
-      text-align: center;
-      padding: 60px 24px;
-      color: var(--muted);
-      font-style: italic;
-      border: 1px dashed rgba(123,63,160,0.25);
-      border-radius: var(--radius);
-    }
-
-    /* ── VIDEOS ──────────────────────────────────────────────── */
-    #videos {
-      background:
-        radial-gradient(ellipse 60% 70% at 10% 60%, rgba(123,63,160,0.18) 0%, transparent 70%),
-        var(--deep);
-    }
-
-    .video-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 24px;
-      margin-top: 48px;
-    }
-
-    .video-card {
-      background: rgba(14,10,20,0.7);
-      border: 1px solid rgba(123,63,160,0.2);
-      border-radius: var(--radius);
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
-
-    .video-card:hover {
-      border-color: rgba(168,85,247,0.4);
-      transform: translateY(-4px);
-      box-shadow: 0 16px 48px rgba(0,0,0,0.4);
-    }
-
-    .video-embed {
-      position: relative;
-      width: 100%;
-      padding-top: 56.25%;
-      background: var(--plum);
-    }
-
-    .video-embed iframe {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    .video-meta { padding: 16px 18px; }
-
-    .video-meta .video-title {
-      font-family: 'Crimson Pro', serif;
-      font-size: 17px;
-      color: var(--cream);
-      margin-bottom: 4px;
-    }
-
-    .video-meta .video-subtitle {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-    }
-
-    .video-link-card {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      padding: 20px 24px;
-      background: rgba(14,10,20,0.7);
-      border: 1px solid rgba(123,63,160,0.2);
-      border-radius: var(--radius);
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.25s ease;
-    }
-
-    .video-link-card:hover {
-      border-color: rgba(168,85,247,0.4);
-      background: rgba(46,26,71,0.4);
-    }
-
-    .yt-icon {
-      width: 40px;
-      height: 40px;
-      background: #ff0000;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .yt-icon svg { width: 18px; height: 18px; fill: white; }
-
-    /* ── PHOTOS ──────────────────────────────────────────────── */
-    #photos { background: var(--ink); }
-
-    .photo-grid {
-      columns: 3;
-      gap: 12px;
-      margin-top: 48px;
-    }
-
-    .photo-item {
-      break-inside: avoid;
-      margin-bottom: 12px;
-      border-radius: var(--radius);
-      overflow: hidden;
-      border: 1px solid rgba(123,63,160,0.2);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .photo-item:hover { transform: scale(1.01); border-color: rgba(168,85,247,0.4); }
-
-    /* zoom hint overlay */
-    .photo-item::after {
-      content: '⤢';
-      position: absolute;
-      bottom: 10px; right: 12px;
-      font-size: 18px;
-      color: white;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-    }
-
-    .photo-item:hover::after { opacity: 0.8; }
-
-    .photo-item img {
-      width: 100%;
-      display: block;
-      transition: filter 0.3s ease;
-    }
-
-    .photo-item:hover img { filter: brightness(1.1) saturate(1.1); }
-
-    .photo-placeholder {
-      aspect-ratio: 4/3;
-      background: linear-gradient(135deg, var(--plum), var(--tobacco));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-    }
-
-    /* ── LIGHTBOX ────────────────────────────────────────────── */
-    #lightbox {
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      background: rgba(8,5,14,0.96);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-
-    #lightbox.open {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .lb-img-wrap {
-      position: relative;
-      max-width: 90vw;
-      max-height: 88vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #lb-img {
-      max-width: 90vw;
-      max-height: 82vh;
-      object-fit: contain;
-      border-radius: 8px;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.7);
-      transition: opacity 0.2s ease;
-      display: block;
-    }
-
-    #lb-img.fading { opacity: 0; }
-
-    .lb-caption {
-      position: absolute;
-      bottom: -36px;
-      left: 0; right: 0;
-      text-align: center;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
-
-    .lb-btn {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(46,26,71,0.6);
-      border: 1px solid rgba(168,85,247,0.3);
-      color: var(--cream);
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      font-size: 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-
-    .lb-btn:hover {
-      background: rgba(123,63,160,0.6);
-      border-color: var(--violet);
-      transform: translateY(-50%) scale(1.05);
-    }
-
-    #lb-prev { left: 20px; }
-    #lb-next { right: 20px; }
-
-    #lb-close {
-      position: fixed;
-      top: 20px; right: 20px;
-      background: rgba(46,26,71,0.6);
-      border: 1px solid rgba(168,85,247,0.3);
-      color: var(--cream);
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      z-index: 1001;
-    }
-
-    #lb-close:hover { background: rgba(123,63,160,0.6); transform: scale(1.05); }
-
-    .lb-counter {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      color: var(--muted);
-    }
-
-    .lb-swipe-hint {
-      display: none;
-      position: fixed;
-      bottom: 50px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      color: rgba(153,128,176,0.5);
-    }
-
-    /* ── LINKS / CONNECT ─────────────────────────────────────── */
-    #connect {
-      background:
-        radial-gradient(ellipse 80% 60% at 50% 100%, rgba(92,61,30,0.25) 0%, transparent 70%),
-        var(--deep);
-    }
-
-    .connect-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-      margin-top: 48px;
-    }
-
-    .connect-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 16px;
-      padding: 36px 24px;
-      background: rgba(26,16,38,0.6);
-      border: 1px solid rgba(123,63,160,0.2);
-      border-radius: var(--radius);
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.3s ease;
-    }
-
-    .connect-card:hover {
-      background: rgba(46,26,71,0.5);
-      border-color: rgba(168,85,247,0.4);
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-    }
-
-    .connect-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-    }
-
-    .connect-icon.instagram { background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); }
-    .connect-icon.youtube   { background: #ff0000; }
-    .connect-icon.merch     { background: linear-gradient(135deg, var(--tobacco), var(--brown)); }
-
-    .connect-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--sienna);
-    }
-
-    .connect-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      color: var(--cream);
-    }
-
-    /* ── FOOTER ──────────────────────────────────────────────── */
-    footer {
-      padding: 40px 24px;
-      border-top: 1px solid rgba(123,63,160,0.15);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      max-width: var(--max);
-      margin: 0 auto;
-    }
-
-    .footer-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--cream);
-      opacity: 0.5;
-    }
-
-    .footer-copy {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-      letter-spacing: 0.15em;
-    }
-
-    /* ── RESPONSIVE ──────────────────────────────────────────── */
-    @media (max-width: 768px) {
-      nav .nav-links { display: none; }
-
-      .bio-grid {
-        grid-template-columns: 1fr;
-        gap: 40px;
-      }
-
-      .show-item {
-        grid-template-columns: 80px 1fr;
-        padding: 16px 18px;
-      }
-
-      .show-ticket { display: none; }
-
-      .photo-grid { columns: 2; }
-
-      .hero-inner { padding: 100px 24px 60px; }
-
-      section { padding: 64px 0; }
-
-      .lb-btn { width: 42px; height: 42px; font-size: 16px; }
-      #lb-prev { left: 8px; }
-      #lb-next { right: 8px; }
-      .lb-swipe-hint { display: block; }
-    }
-
-    @media (max-width: 480px) {
-      .photo-grid { columns: 1; }
-      .connect-grid { grid-template-columns: 1fr 1fr; }
-    }
-
-    /* ── SCROLL REVEAL ───────────────────────────────────────── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .reveal-delay-1 { transition-delay: 0.1s; }
-    .reveal-delay-2 { transition-delay: 0.2s; }
-    .reveal-delay-3 { transition-delay: 0.3s; }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-  <!-- ── LIGHTBOX ─────────────────────────────────────────────── -->
+  <!-- ============================================================
+       LIGHTBOX (photo viewer overlay — do not edit)
+       ============================================================ -->
   <div id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
     <button id="lb-close" aria-label="Close">✕</button>
     <button class="lb-btn" id="lb-prev" aria-label="Previous photo">‹</button>
@@ -872,9 +26,15 @@
     <div class="lb-swipe-hint">swipe to browse</div>
   </div>
 
-  <!-- ── NAV ──────────────────────────────────────────────────── -->
+
+  <!-- ============================================================
+       NAVIGATION
+       ============================================================ -->
   <nav id="navbar">
-    <a class="nav-logo" href="#hero">SCROD</a>
+    <a class="nav-brand" href="#hero">
+      <img class="nav-logo-img" src="logo.png" alt="Scrod fish logo" />
+      <span class="nav-logo-text">SCROD</span>
+    </a>
     <ul class="nav-links">
       <li><a href="#bio">About</a></li>
       <li><a href="#shows">Shows</a></li>
@@ -884,27 +44,30 @@
     </ul>
   </nav>
 
-  <!-- ── HERO ─────────────────────────────────────────────────── -->
+
+  <!-- ============================================================
+       HERO — the big splash section at the top
+       Edit: tagline text, button labels/links
+       ============================================================ -->
   <section id="hero">
     <div class="fish-bg" aria-hidden="true">
-      <svg class="fish" viewBox="0 0 100 50">
-        <path d="M80,25 Q60,5 20,25 Q60,45 80,25 Z M80,25 L100,10 L95,25 L100,40 Z"/>
-      </svg>
-      <svg class="fish" viewBox="0 0 100 50">
-        <path d="M80,25 Q60,5 20,25 Q60,45 80,25 Z M80,25 L100,10 L95,25 L100,40 Z"/>
-      </svg>
-      <svg class="fish" viewBox="0 0 100 50">
-        <path d="M80,25 Q60,5 20,25 Q60,45 80,25 Z M80,25 L100,10 L95,25 L100,40 Z"/>
-      </svg>
-      <svg class="fish" viewBox="0 0 100 50">
-        <path d="M80,25 Q60,5 20,25 Q60,45 80,25 Z M80,25 L100,10 L95,25 L100,40 Z"/>
-      </svg>
+      <svg class="fish" viewBox="0 0 100 50"><path d="M80,25 Q60,5 20,25 Q60,45 80,25 Z M80,25 L100,10 L95,25 L100,40 Z"/></svg>
+      <svg class="fish" viewBox="0 0 100 50"><path d="M80,25 Q60,5 20,25 Q60,45 80,25 Z M80,25 L100,10 L95,25 L100,40 Z"/></svg>
+      <svg class="fish" viewBox="0 0 100 50"><path d="M80,25 Q60,5 20,25 Q60,45 80,25 Z M80,25 L100,10 L95,25 L100,40 Z"/></svg>
+      <svg class="fish" viewBox="0 0 100 50"><path d="M80,25 Q60,5 20,25 Q60,45 80,25 Z M80,25 L100,10 L95,25 L100,40 Z"/></svg>
     </div>
 
     <div class="hero-inner">
+      <!-- Small text above the band name -->
       <p class="hero-eyebrow">Phish-inspired jam band playing funk &amp; originals.</p>
+
+      <!-- Band name — styled via CSS, edit text here if needed -->
       <h1>SCROD</h1>
+
+      <!-- Tagline — feel free to update this -->
       <p class="hero-tagline">Playing the funkier end of Phish and the Phishier end of funk.</p>
+
+      <!-- Hero buttons -->
       <div class="hero-actions">
         <a class="btn btn-primary" href="#shows">↓ Upcoming Shows</a>
         <a class="btn btn-outline" href="#videos">Watch &amp; Listen</a>
@@ -912,21 +75,32 @@
     </div>
   </section>
 
-  <!-- ── BIO ──────────────────────────────────────────────────── -->
+
+  <!-- ============================================================
+       BIO — band description and member list
+       Edit: bio paragraph text, member names and roles
+       ============================================================ -->
   <section id="bio">
     <div class="container">
       <div class="bio-grid reveal">
+
+        <!-- Left: bio text -->
         <div class="bio-text">
           <p class="section-label">Who We Are</p>
           <h2><em>Funk</em> forward,<br>deep end first.</h2>
+
+          <!-- ↓ EDIT BIO TEXT HERE ↓ -->
           <p>
             Drawing on a shared love of Phish, The Grateful Dead, funk, rock, and jazz, Scrod embraces improvisation, collaboration, and groove. This group from greater Boston plays a mix of covers, jams, and originals. Scrod is always chasing the magic that comes from the spontaneity of live performance and shared musical experience.
           </p>
+          <!-- ↑ EDIT BIO TEXT HERE ↑ -->
         </div>
 
+        <!-- Right: band member card -->
         <div class="members-card reveal reveal-delay-2">
           <h3>The Band</h3>
-          <!-- ADD / EDIT MEMBER NAMES AND ROLES BELOW -->
+
+          <!-- ↓ EDIT MEMBER NAMES AND ROLES HERE ↓ -->
           <div class="member">
             <div class="member-dot"></div>
             <span class="member-name">Jeremy Baryza</span>
@@ -947,13 +121,25 @@
             <span class="member-name">Chris Vickery</span>
             <span class="member-role">Drums</span>
           </div>
-          <!-- END MEMBER LIST -->
+          <!-- ↑ EDIT MEMBER NAMES AND ROLES HERE ↑ -->
+
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── SHOWS ────────────────────────────────────────────────── -->
+
+  <!-- ============================================================
+       SHOWS — upcoming gigs
+       
+       HOW TO ADD A SHOW:
+       Copy one <a class="show-item"> block, paste it above the
+       "HOW TO ADD" comment, and fill in the date, venue, location,
+       and ticket link. Delete the block when the show has passed.
+
+       If there are no upcoming shows, remove the show-item blocks
+       and uncomment the <div class="shows-empty"> block below.
+       ============================================================ -->
   <section id="shows">
     <div class="container">
       <div class="shows-header reveal">
@@ -964,21 +150,8 @@
       </div>
 
       <div class="shows-list reveal reveal-delay-1">
-        <!--
-          HOW TO ADD A SHOW:
-          Copy the block below, paste it before this comment, and fill in the details.
-          Remove the show-item block when a date has passed.
 
-          <a class="show-item" href="TICKET_LINK_OR_#" target="_blank">
-            <div class="show-date">MON DD<br>YYYY</div>
-            <div class="show-info">
-              <div class="show-venue">Venue Name</div>
-              <div class="show-location">City, State</div>
-            </div>
-            <div class="show-ticket">Tickets →</div>
-          </a>
-        -->
-
+        <!-- ↓ SHOWS LIST — add/remove shows here ↓ -->
         <a class="show-item" href="https://midwaycafe.com/" target="_blank">
           <div class="show-date">June 03<br>2026</div>
           <div class="show-info">
@@ -987,18 +160,51 @@
           </div>
           <div class="show-ticket">Tickets →</div>
         </a>
+        <!-- ↑ SHOWS LIST — add/remove shows here ↑ -->
 
         <!--
-        <div class="shows-empty">
-          No shows on the books right now — check back soon.
-        </div>
-        -->
-      </div>
+          NO SHOWS? Uncomment the block below and remove all show-item blocks above:
 
+          <div class="shows-empty">
+            No shows on the books right now — check back soon.
+          </div>
+        -->
+
+      </div>
     </div>
   </section>
 
-  <!-- ── VIDEOS ────────────────────────────────────────────────── -->
+
+  <!-- ============================================================
+       VIDEOS — YouTube embeds and links
+
+       HOW TO ADD AN EMBEDDED VIDEO:
+       Find your YouTube video ID — it's the part after "watch?v="
+       Example: https://www.youtube.com/watch?v=dQw4w9WgXcQ → ID is "dQw4w9WgXcQ"
+
+       <div class="video-card reveal">
+         <div class="video-embed">
+           <iframe
+             src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+             allowfullscreen loading="lazy">
+           </iframe>
+         </div>
+         <div class="video-meta">
+           <div class="video-title">Song or Show Title</div>
+           <div class="video-subtitle">Venue · Date</div>
+         </div>
+       </div>
+
+       HOW TO ADD A LINK-ONLY VIDEO (no embed, just a clickable row):
+       <a class="video-link-card reveal" href="https://youtu.be/YOUR_VIDEO_ID" target="_blank">
+         <div class="yt-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+         <div>
+           <div class="video-title">Video Title</div>
+           <div class="video-subtitle">youtube.com</div>
+         </div>
+       </a>
+       ============================================================ -->
   <section id="videos">
     <div class="container">
       <div class="reveal">
@@ -1007,46 +213,16 @@
       </div>
 
       <div class="video-grid">
-        <!--
-          HOW TO ADD AN EMBEDDED VIDEO:
-          Replace the YouTube video ID (the part after "watch?v=") in the src below.
-          Example: https://www.youtube.com/watch?v=dQw4w9WgXcQ → use "dQw4w9WgXcQ"
 
-          <div class="video-card reveal">
-            <div class="video-embed">
-              <iframe
-                src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-                loading="lazy">
-              </iframe>
-            </div>
-            <div class="video-meta">
-              <div class="video-title">Show Title or Song Name</div>
-              <div class="video-subtitle">Venue · Date</div>
-            </div>
-          </div>
+        <!-- ↓ ADD / REMOVE VIDEOS HERE ↓ -->
 
-          HOW TO ADD A LINK-ONLY VIDEO (no embed):
-          <a class="video-link-card reveal" href="https://youtu.be/YOUR_VIDEO_ID" target="_blank">
-            <div class="yt-icon">
-              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </div>
-            <div>
-              <div class="video-title">Video Title</div>
-              <div class="video-subtitle">youtube.com</div>
-            </div>
-          </a>
-        -->
-
-        <!-- SAMPLE EMBEDDED VIDEO — replace with real YouTube IDs -->
+        <!-- SAMPLE — replace "5IsSpAOD6K8" with a real YouTube video ID -->
         <div class="video-card reveal">
           <div class="video-embed">
             <iframe
               src="https://www.youtube.com/embed/5IsSpAOD6K8"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-              loading="lazy">
+              allowfullscreen loading="lazy">
             </iframe>
           </div>
           <div class="video-meta">
@@ -1055,22 +231,39 @@
           </div>
         </div>
 
-        <!-- SAMPLE LINK CARD -->
+        <!-- Link to full YouTube channel -->
         <a class="video-link-card reveal reveal-delay-1" href="https://youtube.com/@scrod" target="_blank">
-          <div class="yt-icon">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          </div>
+          <div class="yt-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
           <div>
             <div class="video-title">See All Videos</div>
             <div class="video-subtitle">youtube.com/@scrod</div>
           </div>
         </a>
 
+        <!-- ↑ ADD / REMOVE VIDEOS HERE ↑ -->
+
       </div>
     </div>
   </section>
 
-  <!-- ── PHOTOS ────────────────────────────────────────────────── -->
+
+  <!-- ============================================================
+       PHOTOS — masonry gallery with lightbox
+
+       HOW TO ADD PHOTOS:
+       1. Put image files in the /photos/ folder
+       2. Copy and paste a block like this:
+
+       <div class="photo-item" data-src="photos/your-photo.jpg" data-caption="Optional caption text">
+         <img src="photos/your-photo.jpg" alt="Scrod live at Venue Name" loading="lazy" />
+       </div>
+
+       - data-src: the image to show in the lightbox (can be a larger version)
+       - data-caption: text shown below the lightbox image (optional, can remove attribute)
+       - alt: describes the photo for screen readers and SEO
+
+       Click any photo to open the full lightbox viewer.
+       ============================================================ -->
   <section id="photos">
     <div class="container">
       <div class="reveal">
@@ -1079,20 +272,10 @@
       </div>
 
       <div class="photo-grid reveal reveal-delay-1" id="photo-grid">
-        <!--
-          HOW TO ADD PHOTOS:
-          Upload your image files to the /photos/ folder, then add a block like this:
 
-          <div class="photo-item" data-src="photos/your-photo.jpg" data-caption="Optional caption">
-            <img src="photos/your-photo.jpg" alt="Scrod live at Venue Name" loading="lazy" />
-          </div>
+        <!-- ↓ ADD PHOTOS HERE — remove placeholder blocks below when you have real photos ↓ -->
 
-          - data-src: path to the full-res image (can point to a larger version for quality)
-          - data-caption: optional text shown at the bottom of the lightbox (can leave empty)
-          Click any photo to open the lightbox. Arrow keys and swipe also work.
-        -->
-
-        <!-- PLACEHOLDER TILES — remove when real photos are added -->
+        <!-- PLACEHOLDER TILES — delete these once real photos are added -->
         <div class="photo-item">
           <div class="photo-placeholder">Photo Coming Soon</div>
         </div>
@@ -1111,12 +294,17 @@
         <div class="photo-item">
           <div class="photo-placeholder" style="aspect-ratio:3/4;">Photo Coming Soon</div>
         </div>
-        <!-- END PLACEHOLDERS -->
+        <!-- ↑ DELETE PLACEHOLDER TILES ABOVE WHEN REAL PHOTOS ARE ADDED ↑ -->
+
       </div>
     </div>
   </section>
 
-  <!-- ── CONNECT ───────────────────────────────────────────────── -->
+
+  <!-- ============================================================
+       CONNECT — social links and merch
+       Edit: href links and display names
+       ============================================================ -->
   <section id="connect">
     <div class="container">
       <div class="reveal">
@@ -1126,153 +314,45 @@
 
       <div class="connect-grid">
 
-        <!-- INSTAGRAM — update href to your real Instagram URL -->
+        <!-- ↓ UPDATE HREF LINKS AND DISPLAY NAMES HERE ↓ -->
+
         <a class="connect-card reveal reveal-delay-1" href="https://instagram.com/scrodphunk" target="_blank">
           <div class="connect-icon instagram">📸</div>
           <div class="connect-label">Instagram</div>
           <div class="connect-name">@scrodphunk</div>
         </a>
 
-        <!-- YOUTUBE — update href to your real YouTube channel -->
-        <a class="connect-card reveal reveal-delay-2" href="https://youtube.com/@scrod" target="_blank">
+        <a class="connect-card reveal reveal-delay-2" href="https://youtube.com/@scrodphunk" target="_blank">
           <div class="connect-icon youtube">▶</div>
           <div class="connect-label">YouTube</div>
-          <div class="connect-name">@scrod</div>
+          <div class="connect-name">@scrodphunk</div>
         </a>
 
-        <!-- MERCH — update href to your merch store URL -->
-        <a class="connect-card reveal reveal-delay-3" href="https://scrodmerch.com" target="_blank">
+        <a class="connect-card reveal reveal-delay-3" href="https://www.teepublic.com/t-shirt/73933309-scrod" target="_blank">
           <div class="connect-icon merch">🎽</div>
           <div class="connect-label">Merch Store</div>
-          <div class="connect-name">scrodmerch.com</div>
+          <div class="connect-name">TeePublic</div>
         </a>
+
+        <!-- ↑ UPDATE HREF LINKS AND DISPLAY NAMES HERE ↑ -->
 
       </div>
     </div>
   </section>
 
-  <!-- ── FOOTER ────────────────────────────────────────────────── -->
+
+  <!-- ============================================================
+       FOOTER
+       Edit: copyright year
+       ============================================================ -->
   <div style="border-top: 1px solid rgba(123,63,160,0.15);">
     <footer>
       <span class="footer-logo">SCROD</span>
-      <span class="footer-copy">© 2025 Scrod · All rights reserved</span>
+      <span class="footer-copy">© 2026 Scrod · All rights reserved</span>
     </footer>
   </div>
 
-  <!-- ── JS ────────────────────────────────────────────────────── -->
-  <script>
-    // ── Sticky nav ──────────────────────────────────────────────
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 40);
-    }, { passive: true });
 
-    // ── Scroll reveal ───────────────────────────────────────────
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-          observer.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    // ── Lightbox ────────────────────────────────────────────────
-    const lightbox  = document.getElementById('lightbox');
-    const lbImg     = document.getElementById('lb-img');
-    const lbCaption = document.getElementById('lb-caption');
-    const lbCounter = document.getElementById('lb-counter');
-    const lbClose   = document.getElementById('lb-close');
-    const lbPrev    = document.getElementById('lb-prev');
-    const lbNext    = document.getElementById('lb-next');
-
-    let photos  = [];
-    let current = 0;
-
-    function buildPhotoIndex() {
-      photos = [];
-      document.querySelectorAll('#photo-grid .photo-item').forEach(item => {
-        const img = item.querySelector('img');
-        if (!img) return; // skip placeholders
-        photos.push({
-          src:     item.dataset.src || img.src,
-          caption: item.dataset.caption || '',
-          alt:     img.alt || '',
-          el:      item
-        });
-      });
-    }
-
-    function openLightbox(index) {
-      buildPhotoIndex();
-      if (!photos.length) return;
-      current = index;
-      showPhoto(current, false);
-      lightbox.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      lbClose.focus();
-    }
-
-    function closeLightbox() {
-      lightbox.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    function showPhoto(index, animate = true) {
-      if (!photos.length) return;
-      current = (index + photos.length) % photos.length;
-      const go = () => {
-        lbImg.src = photos[current].src;
-        lbImg.alt = photos[current].alt;
-        lbCaption.textContent = photos[current].caption;
-        lbCounter.textContent = `${current + 1} / ${photos.length}`;
-        lbImg.classList.remove('fading');
-      };
-      if (animate) {
-        lbImg.classList.add('fading');
-        setTimeout(go, 180);
-      } else {
-        go();
-      }
-    }
-
-    // Click a photo item to open lightbox
-    document.getElementById('photo-grid').addEventListener('click', e => {
-      const item = e.target.closest('.photo-item');
-      if (!item || !item.querySelector('img')) return;
-      buildPhotoIndex();
-      const idx = photos.findIndex(p => p.el === item);
-      if (idx !== -1) openLightbox(idx);
-    });
-
-    lbClose.addEventListener('click', closeLightbox);
-    lbPrev.addEventListener('click',  () => showPhoto(current - 1));
-    lbNext.addEventListener('click',  () => showPhoto(current + 1));
-
-    // Click backdrop to close
-    lightbox.addEventListener('click', e => {
-      if (e.target === lightbox) closeLightbox();
-    });
-
-    // Keyboard nav
-    document.addEventListener('keydown', e => {
-      if (!lightbox.classList.contains('open')) return;
-      if (e.key === 'ArrowRight') showPhoto(current + 1);
-      if (e.key === 'ArrowLeft')  showPhoto(current - 1);
-      if (e.key === 'Escape')     closeLightbox();
-    });
-
-    // Touch swipe
-    let touchStartX = 0;
-    lightbox.addEventListener('touchstart', e => {
-      touchStartX = e.touches[0].clientX;
-    }, { passive: true });
-    lightbox.addEventListener('touchend', e => {
-      const dx = e.changedTouches[0].clientX - touchStartX;
-      if (Math.abs(dx) > 40) showPhoto(dx < 0 ? current + 1 : current - 1);
-    }, { passive: true });
-  </script>
+  <script src="main.js"></script>
 </body>
 </html>
