@@ -248,6 +248,16 @@ h1 {
   animation: fadeUp 1s ease both;
 }
 
+h1 img {
+  height: 1em;
+  width: auto;
+  vertical-align: middle;
+  mix-blend-mode: screen;
+  margin-left: 16px;
+  position: relative;
+  top: -0.05em; /* tiny optical adjustment to center it vertically */
+}
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(30px); }
   to   { opacity: 1; transform: translateY(0); }
