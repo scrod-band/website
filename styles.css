@@ -258,6 +258,7 @@ h1 img {
   top: -0.05em; /* tiny optical adjustment to center it vertically */
 }
 
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(30px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -727,7 +728,77 @@ h1 img {
 .connect-name  { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--cream); }
 
 
-/* ── 11. FOOTER ─────────────────────────────────────────────── */
+/* ── 11. MAILING LIST ───────────────────────────────────────── */
+#mailing-list {
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 50%, rgba(123,63,160,0.15) 0%, transparent 70%),
+    var(--ink);
+  position: relative;
+}
+
+#mailing-list::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--plum), transparent);
+}
+
+.mailing-subtext {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 18px;
+  margin-bottom: 36px;
+}
+
+.mc-form { width: 100%; }
+
+/* Input + button side by side */
+.mc-field-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.mc-email-input {
+  flex: 1;
+  padding: 13px 20px;
+  background: rgba(46,26,71,0.4);
+  border: 1px solid rgba(123,63,160,0.3);
+  border-radius: 6px;
+  color: var(--cream);
+  font-family: 'Crimson Pro', serif;
+  font-size: 17px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mc-email-input::placeholder { color: var(--muted); }
+
+.mc-email-input:focus {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 3px rgba(168,85,247,0.15);
+}
+
+.mc-submit { white-space: nowrap; flex-shrink: 0; }
+
+.mc-fine-print {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* Stack vertically on small screens */
+@media (max-width: 480px) {
+  .mc-field-row { flex-direction: column; }
+  .mc-submit { width: 100%; justify-content: center; }
+}
+
+
+/* ── 12. FOOTER ─────────────────────────────────────────────── */
 footer {
   padding: 40px 24px;
   border-top: 1px solid rgba(123,63,160,0.15);
