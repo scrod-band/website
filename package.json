@@ -1,0 +1,13 @@
+{
+  "name": "scrod-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SCROD band website — built with Eleventy, deployed on Cloudflare Pages",
+  "scripts": {
+    "dev": "eleventy --serve",
+    "build": "eleventy"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}
