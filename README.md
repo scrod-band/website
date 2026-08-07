@@ -44,10 +44,33 @@ npm run build   # writes the site to _site/
 
 ## One-time setup: Cloudflare Pages (production + staging)
 
-Do these in order. GitHub Pages keeps serving the old site until the DNS
-step, so there's no downtime.
+**Do these in order.** The order matters for zero downtime: DNS moves to
+Cloudflare first (the site keeps serving from GitHub Pages, unchanged, while
+nameservers propagate), and only then does the site itself switch — which is
+instant once DNS is already on Cloudflare.
 
-### 1. Create the Pages project
+Important: don't merge this branch into `main` until step 2 — GitHub Pages
+serves `main` as-is, and after the merge there is no `index.html` there
+anymore, so merging early would blank the live site.
+
+### 1. Move DNS to Cloudflare (do this first — nothing visible changes)
+
+1. Cloudflare dashboard → **Add a domain** → `scrodphunk.org` → free plan.
+   Cloudflare imports the existing DNS records, including the GitHub Pages
+   ones — the site keeps working exactly as before.
+2. At the domain registrar, replace the nameservers with the two Cloudflare
+   gives you.
+3. Wait until Cloudflare shows the zone as **Active** (usually minutes,
+   can take a few hours). The site is still the old GitHub Pages site this
+   whole time — that's expected.
+
+### 2. Merge this branch into `main`
+
+Merge `claude/cms-cloudflare-migration-niu1lc` → `main`. `scrodphunk.org`
+(still pointed at GitHub Pages) will 404 from now until step 4 — a few
+minutes.
+
+### 3. Create the Pages project
 
 1. In the [Cloudflare dashboard](https://dash.cloudflare.com) →
    **Workers & Pages → Create → Pages → Connect to Git**.
@@ -57,40 +80,37 @@ step, so there's no downtime.
    - **Build command:** `npm run build`
    - **Build output directory:** `_site`
 4. Deploy. You'll get a `<project>.pages.dev` URL — check the site looks
-   right there before touching DNS.
+   right there.
 
-### 2. Staging branch
+### 4. Point the domain at the Pages project
+
+In the Pages project → **Custom domains** → add `scrodphunk.org` and
+`www.scrodphunk.org`. Cloudflare replaces the imported GitHub Pages records
+and issues certificates; because DNS is already on Cloudflare this takes
+effect right away. The new site is now live.
+
+### 5. Turn off GitHub Pages
+
+1. In the GitHub repo → **Settings → Pages** → set Source to "None".
+2. Delete the `CNAME` file from the repo root (it was only for GitHub
+   Pages), and delete any leftover imported DNS records pointing at
+   `*.github.io` or GitHub's IPs if Cloudflare didn't replace them.
+
+### 6. Staging branch
 
 1. Create a `staging` branch in GitHub (from `main`).
 2. Cloudflare automatically builds every non-production branch as a preview.
    The `staging` branch always has a stable alias:
    `staging.<project>.pages.dev`.
-3. Optional, after DNS is on Cloudflare: add a CNAME record
-   `staging` → `staging.<project>.pages.dev` (proxied) to get
-   `staging.scrodphunk.org`.
+3. Optional: add a CNAME record `staging` → `staging.<project>.pages.dev`
+   (proxied) to get `staging.scrodphunk.org`.
 
 Workflow: design/code experiments go to `staging`, get reviewed at the
 staging URL, then merge `staging` → `main` to go live. Content edits via the
 CMS commit straight to `main` and go live on their own — shows and photos
 don't need to wait for a code review.
 
-### 3. Move DNS to Cloudflare
-
-1. Cloudflare dashboard → **Add a domain** → `scrodphunk.org` → free plan.
-   Cloudflare imports existing DNS records.
-2. At the domain registrar, replace the nameservers with the two Cloudflare
-   gives you. (Propagation: usually minutes, can take a few hours.)
-3. Once the zone is active: in the Pages project → **Custom domains** → add
-   `scrodphunk.org` and `www.scrodphunk.org`. Cloudflare creates the records
-   and certificates. Remove any old GitHub Pages A/CNAME records it imported
-   (the ones pointing at `*.github.io` or GitHub's IPs).
-
-### 4. Turn off GitHub Pages
-
-1. In the GitHub repo → **Settings → Pages** → set Source to "None".
-2. Delete the `CNAME` file from the repo root (it was only for GitHub Pages).
-
-### 5. Connect Pages CMS
+### 7. Connect Pages CMS
 
 1. Go to **https://app.pagescms.org**, sign in with GitHub.
 2. Install the Pages CMS GitHub App on `scrod-band/website` when prompted.
