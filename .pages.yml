@@ -1,0 +1,131 @@
+# Pages CMS configuration (https://pagescms.org)
+# This file defines the editing UI band members see at https://app.pagescms.org
+# after logging in with GitHub and opening this repository.
+
+media:
+  input: photos
+  output: /photos
+
+content:
+  - name: shows
+    label: Shows
+    type: file
+    path: _data/shows.json
+    fields:
+      - name: shows
+        label: Shows
+        type: object
+        list: true
+        fields:
+          - name: venue
+            label: Venue
+            type: string
+            required: true
+          - name: date
+            label: Date
+            type: date
+            description: Past shows disappear from the site automatically.
+          - name: time
+            label: Time (optional)
+            type: string
+            description: Free text shown under the date, e.g. "1p-3p"
+          - name: location
+            label: Location / address
+            type: string
+          - name: ticketUrl
+            label: Ticket link (optional)
+            type: string
+            description: Leave empty if there are no tickets — the "Tickets →" button only shows when this is filled in.
+
+  - name: videos
+    label: Videos
+    type: file
+    path: _data/videos.json
+    fields:
+      - name: videos
+        label: Videos
+        type: object
+        list: true
+        fields:
+          - name: title
+            label: Title
+            type: string
+            required: true
+          - name: subtitle
+            label: Subtitle
+            type: string
+            description: Venue · date, song name, etc.
+          - name: type
+            label: Card type
+            type: select
+            default: embed
+            options:
+              values:
+                - value: embed
+                  label: Embedded player (needs YouTube video ID)
+                - value: link
+                  label: Link only (needs URL)
+          - name: youtubeId
+            label: YouTube video ID
+            type: string
+            description: The part after "watch?v=" in the YouTube URL, e.g. "Hi82dv2NlAQ". Only used for embedded players.
+          - name: url
+            label: Link URL
+            type: string
+            description: Only used for link-only cards.
+
+  - name: photos
+    label: Photo Gallery
+    type: file
+    path: _data/photos.json
+    fields:
+      - name: photos
+        label: Photos
+        type: object
+        list: true
+        fields:
+          - name: image
+            label: Photo
+            type: image
+            required: true
+          - name: alt
+            label: Description
+            type: string
+            description: Short description for screen readers and search engines.
+          - name: caption
+            label: Caption (optional)
+            type: string
+            description: Shown under the photo in the full-screen viewer.
+
+  - name: bio
+    label: Bio & Band Members
+    type: file
+    path: _data/bio.json
+    fields:
+      - name: text
+        label: Bio paragraph
+        type: text
+      - name: members
+        label: Band members
+        type: object
+        list: true
+        fields:
+          - name: name
+            label: Name
+            type: string
+            required: true
+          - name: role
+            label: Instrument / role
+            type: string
+
+  - name: site
+    label: Site Settings
+    type: file
+    path: _data/site.json
+    fields:
+      - name: eyebrow
+        label: Hero small text (above the band name)
+        type: string
+      - name: tagline
+        label: Hero tagline (below the band name)
+        type: string

@@ -47,7 +47,7 @@
 
   <!-- ============================================================
        HERO — the big splash section at the top
-       Edit: tagline text, button labels/links
+       Text comes from _data/site.json (editable in the CMS)
        ============================================================ -->
   <section id="hero">
     <div class="fish-bg" aria-hidden="true">
@@ -58,16 +58,12 @@
     </div>
 
     <div class="hero-inner">
-      <!-- Small text above the band name -->
-      <p class="hero-eyebrow">Phish-inspired jam band playing funk &amp; originals.</p>
+      <p class="hero-eyebrow">{{ site.eyebrow }}</p>
 
-      <!-- Band name — styled via CSS, edit text here if needed -->
       <h1>SCROD <img src="logo.png" alt="Scrodphunk fish logo" /></h1>
 
-      <!-- Tagline — feel free to update this -->
-      <p class="hero-tagline">Funk forward Phish fusion.</p>
+      <p class="hero-tagline">{{ site.tagline }}</p>
 
-      <!-- Hero buttons -->
       <div class="hero-actions">
         <a class="btn btn-primary" href="#shows">↓ Upcoming Shows</a>
         <a class="btn btn-outline" href="#videos">Watch &amp; Listen</a>
@@ -78,57 +74,29 @@
 
   <!-- ============================================================
        BIO — band description and member list
-       Edit: bio paragraph text, member names and roles
+       Content comes from _data/bio.json (editable in the CMS)
        ============================================================ -->
   <section id="bio">
     <div class="container">
       <div class="bio-grid reveal">
 
-        <!-- Left: bio text -->
         <div class="bio-text">
           <p class="section-label">Who We Are</p>
           <h2><em>Funk</em> forward,<br>deep end first.</h2>
-
-          <!-- ↓ EDIT BIO TEXT HERE ↓ -->
-          <p>
-            Drawing on a shared love of Phish, The Grateful Dead, funk, rock, and jazz, Scrod embraces improvisation, collaboration, and groove. This group from greater Boston plays a mix of covers, jams, and originals. Scrod is always chasing the magic that comes from the spontaneity of live performance and shared musical experience.
-          </p>
-          <!-- ↑ EDIT BIO TEXT HERE ↑ -->
+          <p>{{ bio.text }}</p>
         </div>
 
-        <!-- Right: band member card -->
         <div class="members-card reveal reveal-delay-2">
           <h3>The Band</h3>
-
-          <!-- ↓ EDIT MEMBER NAMES AND ROLES HERE ↓ -->
+          {% for member in bio.members %}
           <div class="member">
             <div class="member-dot"></div>
-            <span class="member-name">Jeremy Baryza</span>
-            <span class="member-role">Bass</span>
+            <span class="member-name">{{ member.name }}</span>
+            <span class="member-role">{{ member.role }}</span>
           </div>
-          <div class="member">
-            <div class="member-dot"></div>
-            <span class="member-name">Nick DeTar-Koch</span>
-            <span class="member-role">Guitar</span>
-          </div>
-          <div class="member">
-            <div class="member-dot"></div>
-            <span class="member-name">Josh McGuire</span>
-            <span class="member-role">Keyboards and Vocals</span>
-          </div>
-          <div class="member">
-            <div class="member-dot"></div>
-            <span class="member-name">Mike Mesleh</span>
-            <span class="member-role">Guitar</span>
-          </div>
-          <div class="member">
-            <div class="member-dot"></div>
-            <span class="member-name">Chris Vickery</span>
-            <span class="member-role">Drums</span>
-          </div>
-          <!-- ↑ EDIT MEMBER NAMES AND ROLES HERE ↑ -->
-
+          {% endfor %}
         </div>
+
       </div>
     </div>
   </section>
@@ -136,14 +104,8 @@
 
   <!-- ============================================================
        SHOWS — upcoming gigs
-       
-       HOW TO ADD A SHOW:
-       Copy one <a class="show-item"> block, paste it above the
-       "HOW TO ADD" comment, and fill in the date, venue, location,
-       and ticket link. Delete the block when the show has passed.
-
-       If there are no upcoming shows, remove the show-item blocks
-       and uncomment the <div class="shows-empty"> block below.
+       Content comes from _data/shows.json (editable in the CMS).
+       Past shows are hidden automatically at build time.
        ============================================================ -->
   <section id="shows">
     <div class="container">
@@ -155,50 +117,31 @@
       </div>
 
       <div class="shows-list reveal reveal-delay-1">
-
-        <!-- ↓ SHOWS LIST — add/remove shows here ↓ -->
-             
-
-
-      <!--  
-        Sample for show that doesn't link to tickets to include time 
-        <a class="show-item" href="" target="_blank">
-          <div class="show-date">June 27<br>2026<br> 3p-4p</div>
+        {% set upcomingShows = shows.shows | upcoming %}
+        {% for show in upcomingShows %}
+        {% if show.ticketUrl %}
+        <a class="show-item" href="{{ show.ticketUrl }}" target="_blank">
+          <div class="show-date">{% if show.date %}{{ show.date | showMonthDay }}<br>{{ show.date | showYear }}{% endif %}{% if show.time %}<br>{{ show.time }}{% endif %}</div>
           <div class="show-info">
-            <div class="show-venue">Quincy Porchfest</div>
-            <div class="show-location">144 Shore Ave, Quincy MA.</div>
-          </div>
-        </a>
-    -->
-        <a class="show-item" href="https://tockify.com/midwaycafejp/detail/2638/1783128600000?startms=1783051200000" target="_blank">
-          <div class="show-date">July 03<br>2026</div>
-          <div class="show-info">
-            <div class="show-venue">Midway Cafe</div>
-            <div class="show-location">3496 Washington Street | Jamaica Plain, MA 02130</div>
+            <div class="show-venue">{{ show.venue }}</div>
+            <div class="show-location">{{ show.location }}</div>
           </div>
           <div class="show-ticket">Tickets →</div>
         </a>
-
-        <a class="show-item" href="" target="_blank">
-          <div class="show-date">August 22<br>2026 <br>1p-3p</div>
+        {% else %}
+        <div class="show-item">
+          <div class="show-date">{% if show.date %}{{ show.date | showMonthDay }}<br>{{ show.date | showYear }}{% endif %}{% if show.time %}<br>{{ show.time }}{% endif %}</div>
           <div class="show-info">
-            <div class="show-venue">Jamaica Plain Porchfest</div>
-            <div class="show-location">15 Holbrook Street, Jamaica Plain</div>
+            <div class="show-venue">{{ show.venue }}</div>
+            <div class="show-location">{{ show.location }}</div>
           </div>
-          
-        </a>
-
-
-        <!-- ↑ SHOWS LIST — add/remove shows here ↑ -->
-
-        <!--
-          NO SHOWS? Uncomment the block below and remove all show-item blocks above:
-
-          <div class="shows-empty">
-            No shows on the books right now — check back soon.
-          </div>
-        -->
-
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="shows-empty">
+          No shows on the books right now — check back soon.
+        </div>
+        {% endfor %}
       </div>
     </div>
   </section>
@@ -206,33 +149,9 @@
 
   <!-- ============================================================
        VIDEOS — YouTube embeds and links
-
-       HOW TO ADD AN EMBEDDED VIDEO:
-       Find your YouTube video ID — it's the part after "watch?v="
-       Example: https://www.youtube.com/watch?v=dQw4w9WgXcQ → ID is "dQw4w9WgXcQ"
-
-       <div class="video-card reveal">
-         <div class="video-embed">
-           <iframe
-             src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
-             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-             allowfullscreen loading="lazy">
-           </iframe>
-         </div>
-         <div class="video-meta">
-           <div class="video-title">Song or Show Title</div>
-           <div class="video-subtitle">Venue · Date</div>
-         </div>
-       </div>
-
-       HOW TO ADD A LINK-ONLY VIDEO (no embed, just a clickable row):
-       <a class="video-link-card reveal" href="https://youtu.be/YOUR_VIDEO_ID" target="_blank">
-         <div class="yt-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-         <div>
-           <div class="video-title">Video Title</div>
-           <div class="video-subtitle">youtube.com</div>
-         </div>
-       </a>
+       Content comes from _data/videos.json (editable in the CMS).
+       type "embed" + a YouTube video ID → embedded player card
+       type "link" + a URL → clickable row, no embed
        ============================================================ -->
   <section id="videos">
     <div class="container">
@@ -243,37 +162,32 @@
 
       <div class="video-grid">
 
-        <!-- ↓ ADD / REMOVE VIDEOS HERE ↓ -->
+        {% for video in videos.videos %}
+        {% if video.type == "embed" %}
+        <div class="video-card reveal">
+          <div class="video-embed">
+            <iframe
+              src="https://www.youtube.com/embed/{{ video.youtubeId }}"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy">
+            </iframe>
+          </div>
+          <div class="video-meta">
+            <div class="video-title">{{ video.title }}</div>
+            <div class="video-subtitle">{{ video.subtitle }}</div>
+          </div>
+        </div>
+        {% else %}
+        <a class="video-link-card reveal" href="{{ video.url }}" target="_blank">
+          <div class="yt-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div>
+            <div class="video-title">{{ video.title }}</div>
+            <div class="video-subtitle">{{ video.subtitle }}</div>
+          </div>
+        </a>
+        {% endif %}
+        {% endfor %}
 
-        <!-- SAMPLE — replace "5IsSpAOD6K8" with a real YouTube video ID 
-        <div class="video-card reveal">
-          <div class="video-embed">
-            <iframe
-              src="https://www.youtube.com/embed/5IsSpAOD6K8"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen loading="lazy">
-            </iframe>
-          </div>
-          <div class="video-meta">
-            <div class="video-title">Sample Phish Classic</div>
-            <div class="video-subtitle">Replace this with a real video</div>
-          </div>
-        </div>
-        -->
-        <!-- SAMPLE — replace "5IsSpAOD6K8" with a real YouTube video ID -->
-        <div class="video-card reveal">
-          <div class="video-embed">
-            <iframe
-              src="https://www.youtube.com/embed/Hi82dv2NlAQ"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen loading="lazy">
-            </iframe>
-          </div>
-          <div class="video-meta">
-            <div class="video-title">Scrod 06.03.2026</div>
-            <div class="video-subtitle">Moma Dance</div>
-          </div>
-        </div>
         <!-- Link to full YouTube channel -->
         <a class="video-link-card reveal reveal-delay-1" href="https://youtube.com/@scrodphunk" target="_blank">
           <div class="yt-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
@@ -283,8 +197,6 @@
           </div>
         </a>
 
-        <!-- ↑ ADD / REMOVE VIDEOS HERE ↑ -->
-
       </div>
     </div>
   </section>
@@ -292,20 +204,8 @@
 
   <!-- ============================================================
        PHOTOS — masonry gallery with lightbox
-
-       HOW TO ADD PHOTOS:
-       1. Put image files in the /photos/ folder
-       2. Copy and paste a block like this:
-
-       <div class="photo-item" data-src="photos/your-photo.jpg" data-caption="Optional caption text">
-         <img src="photos/your-photo.jpg" alt="Scrod live at Venue Name" loading="lazy" />
-       </div>
-
-       - data-src: the image to show in the lightbox (can be a larger version)
-       - data-caption: text shown below the lightbox image (optional, can remove attribute)
-       - alt: describes the photo for screen readers and SEO
-        MORE COMMENTS TO TRY AND GET THE RUNNER TO RUN 
-       Click any photo to open the full lightbox viewer.
+       Content comes from _data/photos.json (editable in the CMS).
+       Upload images through the CMS and they land in /photos/.
        ============================================================ -->
   <section id="photos">
     <div class="container">
@@ -313,61 +213,13 @@
         <p class="section-label">Gallery</p>
         <h2><em>Photos</em></h2>
       </div>
-    
+
       <div class="photo-grid reveal reveal-delay-1" id="photo-grid">
-
-        <!-- ↓ ADD PHOTOS HERE — remove placeholder blocks below when you have real photos ↓ -->
-
-        <!-- PLACEHOLDER TILES — delete these once real photos are added -->
-      <div class="photo-item" data-src="photos/Band_Shot.jpg" data-caption="The Band">
-         <img src="photos/Band_Shot.jpg" alt="The Band " loading="lazy" />
-       </div>
-       
-        <div class="photo-item" data-src="photos/Chris_at_Lilypad.jpg" data-caption="">
-         <img src="photos/Chris_at_Lilypad.jpg" alt="Chris " loading="lazy" />
-       </div>
-
-       <div class="photo-item" data-src="photos/Group_at_Lilypad.jpg" data-caption="">
-         <img src="photos/Group_at_Lilypad.jpg" alt="Scrod Live " loading="lazy" />
-       </div>
-       <div class="photo-item" data-src="photos/Guitars_at_Midway.jpg" data-caption="">
-         <img src="photos/Guitars_at_Midway.jpg" alt="Guitars" loading="lazy" />
-       </div>
-       <div class="photo-item" data-src="photos/Jer_at_Lilypadjpg" data-caption="">
-         <img src="photos/Jer_at_Lilypad.jpg" alt="Jer " loading="lazy" />
-       </div>
-
-       <div class="photo-item" data-src="photos/Josh_at_Lilypad.jpg" data-caption="">
-         <img src="photos/Josh_at_Lilypad.jpg" alt="Josh " loading="lazy" />
-       </div>
-       <div class="photo-item" data-src="photos/Mike_at_Lilypad.jpg" data-caption="">
-         <img src="photos/Mike_at_Lilypad.jpg" alt="Mike " loading="lazy" />
-       </div>
-        <!--
-       <div class="photo-item" data-src="photos/IMG-20260207-WA0348.jpg" data-caption="">
-         <img src="photos/IMG-20260207-WA0348.jpg" alt="Scrod Live " loading="lazy" />
-       </div>
-        comment out log in photos/pictures 
-        -->
-       <!--
-        <div class="photo-item" style="margin-top: 30px;">
-          <div class="photo-placeholder" style="aspect-ratio:3/4;">Photo Coming Soon</div>
+        {% for photo in photos.photos %}
+        <div class="photo-item" data-src="{{ photo.image }}"{% if photo.caption %} data-caption="{{ photo.caption }}"{% endif %}>
+          <img src="{{ photo.image }}" alt="{{ photo.alt }}" loading="lazy" />
         </div>
-        <div class="photo-item">
-          <div class="photo-placeholder" style="aspect-ratio:1/1;">Photo Coming Soon</div>
-        </div>
-        <div class="photo-item">
-          <div class="photo-placeholder">Photo Coming Soon</div>
-        </div>
-        <div class="photo-item" style="margin-top: -20px;">
-          <div class="photo-placeholder" style="aspect-ratio:16/9;">Photo Coming Soon</div>
-        </div>
-        <div class="photo-item">
-          <div class="photo-placeholder" style="aspect-ratio:3/4;">Photo Coming Soon</div>
-        </div>
-        -->
-        <!-- ↑ DELETE PLACEHOLDER TILES ABOVE WHEN REAL PHOTOS ARE ADDED ↑ -->
-
+        {% endfor %}
       </div>
     </div>
   </section>
@@ -462,12 +314,11 @@
 
   <!-- ============================================================
        FOOTER
-       Edit: copyright year
        ============================================================ -->
   <div style="border-top: 1px solid rgba(123,63,160,0.15);">
     <footer>
       <span class="footer-logo">SCROD</span>
-      <span class="footer-copy">© 2026 Scrod · All rights reserved</span>
+      <span class="footer-copy">© {{ currentYear }} Scrod · All rights reserved</span>
     </footer>
   </div>
 
