@@ -16,25 +16,45 @@ All the stuff that changes lives in `_data/` as small JSON files:
 | `_data/bio.json` | Bio paragraph and band members |
 | `_data/site.json` | Hero eyebrow + tagline |
 
-Band members edit these through a friendly web UI at
-**https://app.pagescms.org** (see setup below) — no code required. Saving in
-the CMS commits to this repo, which triggers a Cloudflare Pages build and
-deploy automatically. Photos uploaded through the CMS land in `/photos/`.
+Band members edit these through a web UI at **https://app.pagescms.org**
+(no code required). Saving in the CMS commits to this repo; a GitHub Action
+then builds the site and deploys it to Cloudflare. Photos uploaded through
+the CMS land in `/photos/`.
 
 Everything else (layout, styles, the Mailchimp form, social links) lives in
-`index.njk`, `styles.css`, and `main.js` and is edited by hand like before.
+`index.njk`, `styles.css`, and `main.js` and is edited by hand.
 
 Notes:
 
-- **Past shows disappear automatically** — the build filters out any show
-  whose date is before the day of the build. The list refreshes every time
-  something is deployed. (If nothing has been published for a while and a
-  stale show lingers, any CMS save — or a "Retry deployment" in Cloudflare —
-  refreshes it.)
-- The **"Tickets →" button** only appears on a show when its ticket link
-  field is filled in.
+- **Past shows disappear automatically.** The build drops any show dated
+  before the day it runs. The site rebuilds on every change and every Monday,
+  so a finished show is gone within a week even if nobody publishes anything.
+- **Show links and buttons:** if a show has a link, the whole row is
+  clickable. The button on the right (e.g. "Tickets →") only appears when
+  "Button text" is filled in.
+
+## How deploys work
+
+`.github/workflows/deploy.yml` runs on every push to `main` or `staging`
+(and weekly). It builds with Eleventy and uploads `_site/` to the Cloudflare
+Pages project `scrod-website` with Wrangler.
+
+| Branch | Deploys to |
+|---|---|
+| `main` | Production: `scrodphunk.org` |
+| `staging` | Preview: `staging.scrod-website.pages.dev` |
+
+Workflow: try design or code changes on `staging`, check the staging URL,
+then merge `staging` into `main`. Content edits in the CMS go straight to
+`main` and are live a minute or two later.
+
+The Action needs two repository secrets (Settings → Secrets and variables →
+Actions): `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. Without them
+it skips the deploy without failing.
 
 ## Local development
+
+Requires Node.js 22 or newer.
 
 ```bash
 npm install
@@ -42,87 +62,34 @@ npm run dev     # serves at http://localhost:8080 with live reload
 npm run build   # writes the site to _site/
 ```
 
-## One-time setup: Cloudflare Pages (production + staging)
+Manual deploy, if you ever need one:
 
-**Do these in order.** The order matters for zero downtime: DNS moves to
-Cloudflare first (the site keeps serving from GitHub Pages, unchanged, while
-nameservers propagate), and only then does the site itself switch — which is
-instant once DNS is already on Cloudflare.
+```bash
+npx wrangler login
+npm run build
+npx wrangler pages deploy _site --project-name scrod-website --branch main
+```
 
-Important: don't merge this branch into `main` until step 2 — GitHub Pages
-serves `main` as-is, and after the merge there is no `index.html` there
-anymore, so merging early would blank the live site.
+## One-time setup
 
-### 1. Move DNS to Cloudflare (do this first — nothing visible changes)
+1. **Cloudflare Pages project.** `npx wrangler pages project create
+   scrod-website --production-branch main`. It must be in the same
+   Cloudflare account as the `scrodphunk.org` zone.
+2. **API token.** https://dash.cloudflare.com/profile/api-tokens → Create
+   Token → Custom token → permission *Account → Cloudflare Pages → Edit*.
+   Save it as the `CLOUDFLARE_API_TOKEN` secret, and your account ID
+   (`npx wrangler whoami`) as `CLOUDFLARE_ACCOUNT_ID`.
+3. **Custom domains.** Cloudflare dashboard → Workers & Pages →
+   scrod-website → Custom domains → add `scrodphunk.org` and
+   `www.scrodphunk.org`.
+4. **Turn off GitHub Pages.** Repo Settings → Pages → Source: None. Then
+   delete the `CNAME` file (GitHub Pages only).
+5. **Staging.** Create a `staging` branch from `main`.
+6. **CMS.** Sign in at https://app.pagescms.org with GitHub, install the
+   Pages CMS app on `scrod-band/website`, open the repo, and edit on `main`.
+   Each editor needs a GitHub account with write access to this repo.
 
-1. Cloudflare dashboard → **Add a domain** → `scrodphunk.org` → free plan.
-   Cloudflare imports the existing DNS records, including the GitHub Pages
-   ones — the site keeps working exactly as before.
-2. At the domain registrar, replace the nameservers with the two Cloudflare
-   gives you.
-3. Wait until Cloudflare shows the zone as **Active** (usually minutes,
-   can take a few hours). The site is still the old GitHub Pages site this
-   whole time — that's expected.
+## Later
 
-### 2. Merge this branch into `main`
-
-Merge `claude/cms-cloudflare-migration-niu1lc` → `main`. `scrodphunk.org`
-(still pointed at GitHub Pages) will 404 from now until step 4 — a few
-minutes.
-
-### 3. Create the Pages project
-
-1. In the [Cloudflare dashboard](https://dash.cloudflare.com) →
-   **Workers & Pages → Create → Pages → Connect to Git**.
-2. Authorize GitHub and pick `scrod-band/website`.
-3. Build settings:
-   - **Production branch:** `main`
-   - **Build command:** `npm run build`
-   - **Build output directory:** `_site`
-4. Deploy. You'll get a `<project>.pages.dev` URL — check the site looks
-   right there.
-
-### 4. Point the domain at the Pages project
-
-In the Pages project → **Custom domains** → add `scrodphunk.org` and
-`www.scrodphunk.org`. Cloudflare replaces the imported GitHub Pages records
-and issues certificates; because DNS is already on Cloudflare this takes
-effect right away. The new site is now live.
-
-### 5. Turn off GitHub Pages
-
-1. In the GitHub repo → **Settings → Pages** → set Source to "None".
-2. Delete the `CNAME` file from the repo root (it was only for GitHub
-   Pages), and delete any leftover imported DNS records pointing at
-   `*.github.io` or GitHub's IPs if Cloudflare didn't replace them.
-
-### 6. Staging branch
-
-1. Create a `staging` branch in GitHub (from `main`).
-2. Cloudflare automatically builds every non-production branch as a preview.
-   The `staging` branch always has a stable alias:
-   `staging.<project>.pages.dev`.
-3. Optional: add a CNAME record `staging` → `staging.<project>.pages.dev`
-   (proxied) to get `staging.scrodphunk.org`.
-
-Workflow: design/code experiments go to `staging`, get reviewed at the
-staging URL, then merge `staging` → `main` to go live. Content edits via the
-CMS commit straight to `main` and go live on their own — shows and photos
-don't need to wait for a code review.
-
-### 7. Connect Pages CMS
-
-1. Go to **https://app.pagescms.org**, sign in with GitHub.
-2. Install the Pages CMS GitHub App on `scrod-band/website` when prompted.
-3. Open the repo in Pages CMS — the editing UI comes from `.pages.yml`,
-   already in this repo. Pick the `main` branch to edit live content.
-4. Each band member who edits needs a GitHub account with write access to
-   this repo (repo → Settings → Collaborators), then signs into Pages CMS
-   the same way.
-
-## Nice-to-haves (later)
-
-- `logo.png` is 3.9 MB but displays small — resizing it to ~512px wide
-  would noticeably speed up first load.
-- A weekly scheduled rebuild (Cloudflare **Deploy Hook** + a cron trigger)
-  would expire past shows even when nobody has published anything.
+- `logo.png` is 3.9 MB but displays small. Resizing it to about 512px wide
+  would speed up the first page load.

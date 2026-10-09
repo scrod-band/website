@@ -126,7 +126,7 @@
             <div class="show-venue">{{ show.venue }}</div>
             <div class="show-location">{{ show.location }}</div>
           </div>
-          <div class="show-ticket">Tickets →</div>
+          {% if show.buttonText %}<div class="show-ticket">{{ show.buttonText }}</div>{% endif %}
         </a>
         {% else %}
         <div class="show-item">

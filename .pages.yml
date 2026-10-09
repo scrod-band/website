@@ -33,9 +33,13 @@ content:
             label: Location / address
             type: string
           - name: ticketUrl
-            label: Ticket link (optional)
+            label: Link (optional)
             type: string
-            description: Leave empty if there are no tickets — the "Tickets →" button only shows when this is filled in.
+            description: Tickets or event info page. When filled in, the whole show row is clickable.
+          - name: buttonText
+            label: Button text (optional)
+            type: string
+            description: e.g. "Tickets →". Leave empty for no button; the row still links if a link is set.
 
   - name: videos
     label: Videos
